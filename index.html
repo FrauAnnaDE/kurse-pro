@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Фрау Анна немецкий — Витрина курсов и платных материалов</title>
+  <style>
+    :root{
+      --bg: #f6efe7;
+      --card: #ffffff;
+      --text: #1f1f1f;
+      --muted: #6b6b6b;
+      --stroke: rgba(0,0,0,.08);
+      --shadow: 0 14px 36px rgba(0,0,0,.10);
+      --radius: 22px;
+      --pill: #ffffff;
+      --accent: #f3b21b;
+      --accentText: #1a1a1a;
+      --chipBorder: rgba(0,0,0,.10);
+      --chipActive: rgba(243,178,27,.25);
+      --focus: rgba(243,178,27,.45);
+    }
+
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, #fbf4ed 0%, var(--bg) 55%, #efe3d6 130%);
+      color: var(--text);
+    }
+
+    .wrap{
+      max-width: 1220px;
+      margin: 22px auto 56px;
+      padding: 0 16px;
+    }
+
+    /* top bar */
+    .top{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.06);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding-left: 4px;
+      flex: 0 0 auto;
+    }
+    .logo{
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: rgba(255,255,255,.65);
+      border: 1px solid var(--stroke);
+      padding: 5px;
+    }
+    .brandTitle{
+      line-height: 1.1;
+      font-weight: 800;
+      font-size: 14px;
+      white-space: nowrap;
+      letter-spacing: .02em;
+    }
+    .brandSub{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 1px;
+      white-space: nowrap;
+    }
+
+    .search{
+      flex: 1 1 auto;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--stroke);
+      min-width: 220px;
+    }
+    .searchIcon{
+      font-size: 16px;
+      color: var(--muted);
+      user-select:none;
+    }
+    input[type="search"]{
+      border:0;
+      outline:0;
+      width: 100%;
+      font-size: 14px;
+      background: transparent;
+    }
+    input[type="search"]::placeholder{ color: #9a9a9a; }
+
+    .chips{
+      display:flex;
+      gap: 8px;
+      flex: 0 0 auto;
+      overflow:auto;
+      padding-right: 4px;
+      scrollbar-width: none;
+    }
+    .chips::-webkit-scrollbar{ display:none; }
+    .chip{
+      border: 1px solid var(--chipBorder);
+      background: var(--pill);
+      color: #2a2a2a;
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor:pointer;
+      white-space: nowrap;
+      transition: transform .08s ease, background .18s ease, border-color .18s ease;
+    }
+    .chip:hover{ transform: translateY(-1px); }
+    .chip.active{
+      border-color: rgba(243,178,27,.55);
+      background: var(--chipActive);
+    }
+
+    /* grid */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 1040px){
+      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 680px){
+      .top{ flex-wrap: wrap; border-radius: 22px; }
+      .brand{ width: 100%; justify-content: center; padding-left: 0; }
+      .search{ width: 100%; }
+      .chips{ width: 100%; }
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction: column;
+      min-height: 420px;
+    }
+
+    .hero{
+      position: relative;
+      height: 220px;
+      background: #fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .heroImg{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display:block;
+    }
+    .thumbText{
+      color: #c0c0c0;
+      font-weight: 800;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      font-size: 12px;
+      user-select:none;
+    }
+
+    .badge{
+      position:absolute;
+      left: 14px;
+      top: 14px;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--stroke);
+      color: #2b2b2b;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .content{
+      padding: 16px 16px 14px;
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1 1 auto;
+    }
+
+    .title{
+      font-size: 18px;
+      line-height: 1.22;
+      font-weight: 900;
+      margin: 2px 0 0;
+    }
+    .desc{
+      margin:0;
+      color: #4f4f4f;
+      font-size: 14px;
+      line-height: 1.45;
+      min-height: 62px;
+    }
+
+    .metaRow{
+      display:flex;
+      align-items:flex-end;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 6px;
+    }
+
+    .priceBox{
+      display:flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .price{
+      font-weight: 950;
+      font-size: 18px;
+    }
+    .tags{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex: 0 0 auto;
+    }
+
+    .btn{
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      font-size: 13px;
+      border: 1px solid var(--stroke);
+      cursor:pointer;
+      background: #fff;
+      transition: transform .08s ease, box-shadow .18s ease, border-color .18s ease;
+      text-decoration:none;
+      color: inherit;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width: 110px;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:focus{ outline: 3px solid var(--focus); outline-offset: 2px; }
+
+    .btnPrimary{
+      background: var(--accent);
+      border-color: rgba(0,0,0,.08);
+      color: var(--accentText);
+      box-shadow: 0 10px 18px rgba(243,178,27,.30);
+    }
+
+    .empty{
+      margin: 20px 4px 0;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px dashed rgba(0,0,0,.18);
+      background: rgba(255,255,255,.5);
+      color: var(--muted);
+      display:none;
+    }
+
+    /* ===== Frau Anna brand blocks (below catalog) ===== */
+    .brandBlock{
+      margin-top: 46px;
+      padding: 28px;
+      background: rgba(255,255,255,.65);
+      border: 1px solid var(--stroke);
+      border-radius: 26px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.05);
+    }
+    .brandTitle2{
+      font-size: 22px;
+      font-weight: 950;
+      margin: 0 0 18px;
+      letter-spacing: .01em;
+    }
+    .approachGrid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .approachItem{
+      background:#fff;
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      padding:18px;
+    }
+    .approachHead{
+      font-weight:950;
+      font-size:16px;
+      margin-bottom:6px;
+    }
+    .approachText{
+      color:var(--muted);
+      font-size:14px;
+    }
+    .brandText{
+      color:#3e3e3e;
+      font-size:15px;
+      line-height:1.6;
+      max-width:760px;
+      margin: 0;
+    }
+    @media (max-width: 800px){
+      .approachGrid{ grid-template-columns: 1fr; }
+    }
+
+    /* modal */
+    .modalBack{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 50;
+    }
+    .modal{
+      width: min(860px, 100%);
+      background: #fff;
+      border-radius: 22px;
+      border: 1px solid rgba(0,0,0,.12);
+      box-shadow: 0 30px 70px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding: 14px 16px;
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--stroke);
+      background: #fff;
+    }
+    .modalTitle{
+      font-weight: 950;
+      font-size: 18px;
+      line-height: 1.2;
+      margin: 0;
+    }
+    .close{
+      border: 1px solid var(--stroke);
+      background: #fff;
+      border-radius: 12px;
+      width: 38px;
+      height: 38px;
+      cursor:pointer;
+      font-weight: 950;
+    }
+    .modalBody{
+      padding: 16px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 16px;
+    }
+    @media (max-width: 860px){
+      .modalBody{ grid-template-columns: 1fr; }
+    }
+    .box{
+      border: 1px solid var(--stroke);
+      border-radius: 18px;
+      padding: 14px;
+      background: #fff;
+    }
+    .box h4{
+      margin: 0 0 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--muted);
+      font-weight: 900;
+    }
+    .list{
+      margin: 0;
+      padding-left: 16px;
+      color: #3e3e3e;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .modalFoot{
+      padding: 14px 16px;
+      border-top: 1px solid var(--stroke);
+      display:flex;
+      gap: 10px;
+      justify-content:flex-end;
+      background: #fff;
+    }
+
+    /* gallery inside modal */
+    .gallery{
+      display:grid;
+      grid-template-columns: 44px 1fr 44px;
+      gap: 10px;
+      align-items:center;
+    }
+    .gFrame{
+      width: 100%;
+      aspect-ratio: 16/10;
+      border-radius: 16px;
+      overflow:hidden;
+      border: 1px solid var(--stroke);
+      background:#fafafa;
+    }
+    .gFrame img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+    .gBtn{
+      height: 44px;
+      width: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--stroke);
+      background:#fff;
+      cursor:pointer;
+      font-size: 22px;
+      font-weight: 950;
+    }
+    .dots{
+      display:flex;
+      gap: 6px;
+      justify-content:center;
+      margin-top: 10px;
+    }
+    .dot{
+      width: 7px;
+      height: 7px;
+      border-radius: 99px;
+      border: 1px solid rgba(0,0,0,.18);
+      background: rgba(0,0,0,.08);
+      cursor:pointer;
+    }
+    .dot.active{
+      background: rgba(243,178,27,.85);
+      border-color: rgba(243,178,27,.95);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top" role="region" aria-label="Поиск и фильтры">
+      <div class="brand" aria-label="Бренд">
+        <img class="logo" src="logo.png" alt="Frau Anna логотип" onerror="this.style.display='none'">
+        <div>
+          <div class="brandTitle">ФРАУ АННА - НЕМЕЦКИЙ ЯЗЫК</div>
+          <div class="brandSub">витрина курсов и платных материалов</div>
+        </div>
+      </div>
+
+      <div class="search" aria-label="Поиск">
+        <div class="searchIcon">🔎</div>
+        <input id="q" type="search" placeholder="Поиск по товарам: резюме, звонки, экзамены…" autocomplete="off">
+      </div>
+
+      <div class="chips" id="chips" aria-label="Фильтры"></div>
+    </div>
+
+    <div class="empty" id="empty">
+      Ничего не найдено. Попробуй другой запрос или сними фильтры.
+    </div>
+
+    <div class="grid" id="grid" aria-label="Товары"></div>
+
+    <!-- ===== Frau Anna Approach ===== -->
+    <section class="brandBlock">
+      <h2 class="brandTitle2">Как проходит обучение</h2>
+
+      <div class="approachGrid">
+        <div class="approachItem">
+          <div class="approachHead">Спокойно</div>
+          <div class="approachText">без перегрузки и стресса</div>
+        </div>
+
+        <div class="approachItem">
+          <div class="approachHead">Практично</div>
+          <div class="approachText">реальные жизненные ситуации</div>
+        </div>
+
+        <div class="approachItem">
+          <div class="approachHead">Системно</div>
+          <div class="approachText">понятная структура и поддержка</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== For whom ===== -->
+    <section class="brandBlock">
+      <h2 class="brandTitle2">Кому подойдут материалы Frau Anna</h2>
+
+      <p class="brandText">
+        Взрослым, которые учат немецкий для жизни, работы или переезда.
+        Если вы на уровне A1–B1 и хотите говорить увереннее —
+        вам подойдёт формат Frau Anna.
+      </p>
+    </section>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modalBack" id="modalBack" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Подробности товара">
+      <div class="modalHead">
+        <h3 class="modalTitle" id="mTitle">Заголовок</h3>
+        <button class="close" id="mClose" aria-label="Закрыть">✕</button>
+      </div>
+
+      <div class="modalBody">
+        <!-- Gallery -->
+        <div class="box" id="mGalleryBox">
+          <h4>Превью</h4>
+          <div class="gallery">
+            <button class="gBtn" id="gPrev" type="button" aria-label="Предыдущая">‹</button>
+            <div class="gFrame">
+              <img id="gImg" src="" alt="">
+            </div>
+            <button class="gBtn" id="gNext" type="button" aria-label="Следующая">›</button>
+          </div>
+          <div class="dots" id="gDots"></div>
+        </div>
+
+        <!-- Info -->
+        <div class="box">
+          <h4>Описание</h4>
+          <div id="mDesc" style="font-size:14px;line-height:1.5;color:#3e3e3e"></div>
+
+          <div style="height:14px"></div>
+
+          <h4>Что внутри</h4>
+          <ul class="list" id="mList"></ul>
+
+          <div style="height:14px"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-end">
+            <div>
+              <div style="font-size:12px;color:var(--muted);font-weight:900">Цена</div>
+              <div id="mPrice" style="font-size:18px;font-weight:950"></div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:12px;color:var(--muted);font-weight:900">Теги</div>
+              <div id="mTags" style="font-size:12px;color:var(--muted)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modalFoot">
+        <a class="btn" id="mMore" href="#" target="_blank" rel="noopener">Подробнее</a>
+        <a class="btn btnPrimary" id="mBuy" href="#" target="_blank" rel="noopener">Купить</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function images3(id){
+      return [`img/${id}_1.png`, `img/${id}_2.png`, `img/${id}_3.png`];
+    }
+
+    const products = [
+      {
+        id: "call-a12",
+        title: "Телефонные фразы A1.2 — «Звоню по вакансии»",
+        badge: "PDF • A1–A2",
+        desc: "Готовый набор фраз + вопросы работодателю. Подходит для первых звонков и тренировки разговорной речи.",
+        price: "490 ₽",
+        tags: ["Переезд/работа", "Разговорная практика"],
+        images: images3("call-a12"),
+        inside: [
+          "Открывающие фразы",
+          "Вопросы о вакансии и условиях",
+          "Ответы о себе (A1.2)",
+          "Договорённость о следующем шаге",
+          "Фразы для завершения разговора"
+        ],
+        moreUrl: "#",
+        buyUrl: "#"
+      },
+      {
+        id: "cv-template",
+        title: "Lebenslauf шаблон (взрослые) + примеры",
+        badge: "Шаблон",
+        desc: "Аккуратный шаблон резюме + набор типовых формулировок для опыта/навыков. Без «воды», по делу.",
+        price: "690 ₽",
+        tags: ["Переезд/работа"],
+        images: images3("cv-template"),
+        inside: [
+          "Шаблон Lebenslauf (универсальный)",
+          "Примеры формулировок опыта",
+          "Словарь полезных глаголов",
+          "Готовые блоки «Skills / Aufgaben»"
+        ],
+        moreUrl: "#",
+        buyUrl: "#"
+      },
+      {
+        id: "exam-a2",
+        title: "Экзамен A2: тренажёр по грамматике и говорению",
+        badge: "PDF • A2",
+        desc: "Компактный пакет упражнений под типовые темы. Можно использовать и для самостоятельной подготовки.",
+        price: "990 ₽",
+        tags: ["Экзамены", "Разговорная практика"],
+        images: images3("exam-a2"),
+        inside: [
+          "Короткие грамматические тренировки",
+          "Типовые темы для A2",
+          "Мини-говорение по шаблонам",
+          "Чек-лист «что повторить»"
+        ],
+        moreUrl: "#",
+        buyUrl: "#"
+      }
+    ];
+
+    const ALL = "Все";
+    const chipOrder = [ALL, "Переезд/работа", "Разговорная практика", "Экзамены"];
+    let activeChip = ALL;
+
+    const chipsEl = document.getElementById("chips");
+    const gridEl = document.getElementById("grid");
+    const qEl = document.getElementById("q");
+    const emptyEl = document.getElementById("empty");
+
+    function uniqueTags(list){
+      const set = new Set();
+      list.forEach(p => (p.tags || []).forEach(t => set.add(t)));
+      return [...set];
+    }
+
+    function buildChips(){
+      const existing = uniqueTags(products);
+      const chips = [];
+      chipOrder.forEach(c => chips.push(c));
+      existing.forEach(t => { if(!chips.includes(t)) chips.push(t); });
+
+      chipsEl.innerHTML = "";
+      chips.forEach(name => {
+        const b = document.createElement("button");
+        b.className = "chip" + (name === activeChip ? " active" : "");
+        b.textContent = name;
+        b.type = "button";
+        b.addEventListener("click", () => {
+          activeChip = name;
+          [...chipsEl.children].forEach(x => x.classList.remove("active"));
+          b.classList.add("active");
+          render();
+        });
+        chipsEl.appendChild(b);
+      });
+    }
+
+    function matchesQuery(p, q){
+      if(!q) return true;
+      const hay = [
+        p.title, p.desc, p.badge, p.price,
+        ...(p.tags||[]),
+        ...(p.inside||[])
+      ].join(" ").toLowerCase();
+      return hay.includes(q.toLowerCase());
+    }
+
+    function matchesChip(p){
+      if(activeChip === ALL) return true;
+      return (p.tags || []).includes(activeChip);
+    }
+
+    function cardHTML(p){
+      const tagsText = (p.tags||[]).join(" · ");
+      const cover = (p.images && p.images.length) ? p.images[0] : "";
+      return `
+        <article class="card" data-id="${p.id}">
+          <div class="hero" aria-label="Превью товара">
+            <div class="badge">${escapeHtml(p.badge || "")}</div>
+            ${cover
+              ? `<img class="heroImg" src="${cover}" alt="" loading="lazy" onerror="this.remove(); this.parentElement.insertAdjacentHTML('beforeend','<div class=thumbText>preview</div>')">`
+              : `<div class="thumbText">preview</div>`
+            }
+          </div>
+          <div class="content">
+            <h3 class="title">${escapeHtml(p.title)}</h3>
+            <p class="desc">${escapeHtml(p.desc || "")}</p>
+
+            <div class="metaRow">
+              <div class="priceBox">
+                <div class="price">${escapeHtml(p.price || "")}</div>
+                <div class="tags">${escapeHtml(tagsText)}</div>
+              </div>
+              <div class="actions">
+                <button class="btn" type="button" data-action="more">Подробнее</button>
+                <a class="btn btnPrimary" href="${p.buyUrl || "#"}" target="_blank" rel="noopener" data-action="buy">Купить</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function render(){
+      const q = (qEl.value || "").trim();
+      const filtered = products.filter(p => matchesChip(p) && matchesQuery(p, q));
+
+      gridEl.innerHTML = filtered.map(cardHTML).join("");
+      emptyEl.style.display = filtered.length ? "none" : "block";
+
+      [...gridEl.querySelectorAll(".card")].forEach(card => {
+        const id = card.getAttribute("data-id");
+        const p = products.find(x => x.id === id);
+        const moreBtn = card.querySelector('[data-action="more"]');
+        moreBtn.addEventListener("click", () => openModal(p));
+      });
+    }
+
+    const modalBack = document.getElementById("modalBack");
+    const mClose = document.getElementById("mClose");
+    const mTitle = document.getElementById("mTitle");
+    const mDesc = document.getElementById("mDesc");
+    const mList = document.getElementById("mList");
+    const mPrice = document.getElementById("mPrice");
+    const mTags = document.getElementById("mTags");
+    const mMore = document.getElementById("mMore");
+    const mBuy = document.getElementById("mBuy");
+
+    const gImg = document.getElementById("gImg");
+    const gPrev = document.getElementById("gPrev");
+    const gNext = document.getElementById("gNext");
+    const gDots = document.getElementById("gDots");
+    const mGalleryBox = document.getElementById("mGalleryBox");
+
+    let gImages = [];
+    let gIndex = 0;
+
+    function setActiveDot(){
+      [...gDots.querySelectorAll(".dot")].forEach((d, i) => {
+        d.classList.toggle("active", i === gIndex);
+      });
+    }
+
+    function renderDots(){
+      gDots.innerHTML = gImages.map((_, i)=>(
+        `<span class="dot ${i===gIndex?'active':''}" data-i="${i}" aria-label="Слайд ${i+1}"></span>`
+      )).join("");
+      [...gDots.querySelectorAll(".dot")].forEach(d=>{
+        d.addEventListener("click", ()=> {
+          gIndex = Number(d.getAttribute("data-i"));
+          renderGallery();
+        });
+      });
+    }
+
+    function renderGallery(){
+      if(!gImages.length){
+        mGalleryBox.style.display = "none";
+        return;
+      }
+      mGalleryBox.style.display = "block";
+      gImg.src = gImages[gIndex];
+      renderDots();
+    }
+
+    function prevImg(){
+      if(!gImages.length) return;
+      gIndex = (gIndex - 1 + gImages.length) % gImages.length;
+      gImg.src = gImages[gIndex];
+      setActiveDot();
+    }
+    function nextImg(){
+      if(!gImages.length) return;
+      gIndex = (gIndex + 1) % gImages.length;
+      gImg.src = gImages[gIndex];
+      setActiveDot();
+    }
+
+    gPrev.addEventListener("click", prevImg);
+    gNext.addEventListener("click", nextImg);
+
+    let startX = null;
+    gImg.addEventListener("touchstart", (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
+    gImg.addEventListener("touchend", (e)=>{
+      if(startX === null) return;
+      const endX = e.changedTouches[0].clientX;
+      const dx = endX - startX;
+      startX = null;
+      if(Math.abs(dx) > 30) (dx > 0 ? prevImg() : nextImg());
+    }, {passive:true});
+
+    function openModal(p){
+      mTitle.textContent = p.title || "";
+      mDesc.textContent = p.desc || "";
+      mList.innerHTML = (p.inside || []).map(x => `<li>${escapeHtml(x)}</li>`).join("");
+      mPrice.textContent = p.price || "";
+      mTags.textContent = (p.tags || []).join(" · ");
+      mMore.href = p.moreUrl || "#";
+      mBuy.href = p.buyUrl || "#";
+
+      gImages = (p.images || []);
+      gIndex = 0;
+      renderGallery();
+
+      modalBack.style.display = "flex";
+      modalBack.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal(){
+      modalBack.style.display = "none";
+      modalBack.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    mClose.addEventListener("click", closeModal);
+    modalBack.addEventListener("click", (e)=>{ if(e.target === modalBack) closeModal(); });
+    window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    qEl.addEventListener("input", render);
+
+    buildChips();
+    render();
+  </script>
+</body>
+</html>
