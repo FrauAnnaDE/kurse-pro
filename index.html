@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Фрау Анна немецкий — Витрина курсов и платных материалов</title>
+
   <style>
     :root{
       --bg: #f6efe7;
@@ -21,7 +22,8 @@
       --focus: rgba(243,178,27,.45);
     }
 
-    * { box-sizing: border-box; }
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
@@ -35,7 +37,7 @@
       padding: 0 16px;
     }
 
-    /* top bar */
+    /* ===== TOP (как было: flex) ===== */
     .top{
       display:flex;
       align-items:center;
@@ -50,7 +52,7 @@
 
     .brand{
       display:flex;
-      align-items:center;
+      align-items:flex-start;
       gap:10px;
       padding-left: 4px;
       flex: 0 0 auto;
@@ -63,7 +65,9 @@
       background: rgba(255,255,255,.65);
       border: 1px solid var(--stroke);
       padding: 5px;
+      margin-top: 2px;
     }
+    .brandInfo{ display:flex; flex-direction:column; }
     .brandTitle{
       line-height: 1.1;
       font-weight: 800;
@@ -75,8 +79,17 @@
       font-size: 12px;
       color: var(--muted);
       font-weight: 600;
-      margin-top: 1px;
+      margin-top: 2px;
       white-space: nowrap;
+    }
+
+    /* кнопки под "витрина..." (как ты просила) */
+    .brandBtns{
+      display:flex;
+      gap:10px;
+      margin-top: 8px;
+      align-items:center;
+      flex-wrap:wrap;
     }
 
     .search{
@@ -102,7 +115,7 @@
       font-size: 14px;
       background: transparent;
     }
-    input[type="search"]::placeholder{ color: #9a9a9a; }
+    input[type="search"]::placeholder{ color:#9a9a9a; }
 
     .chips{
       display:flex;
@@ -111,8 +124,10 @@
       overflow:auto;
       padding-right: 4px;
       scrollbar-width: none;
+      max-width: 520px; /* чтобы не уезжало в бесконечность */
     }
     .chips::-webkit-scrollbar{ display:none; }
+
     .chip{
       border: 1px solid var(--chipBorder);
       background: var(--pill);
@@ -131,6 +146,38 @@
       background: var(--chipActive);
     }
 
+    /* общие кнопки */
+    .btn{
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      font-size: 13px;
+      border: 1px solid var(--stroke);
+      cursor:pointer;
+      background: #fff;
+      transition: transform .08s ease, box-shadow .18s ease, border-color .18s ease;
+      text-decoration:none;
+      color: inherit;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width: 110px;
+      white-space: nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:focus{ outline: 3px solid var(--focus); outline-offset: 2px; }
+
+    .btnPrimary{
+      background: var(--accent);
+      border-color: rgba(0,0,0,.08);
+      color: var(--accentText);
+      box-shadow: 0 10px 18px rgba(243,178,27,.30);
+    }
+    .btnSmall{
+      padding: 9px 12px;
+      min-width: auto;
+    }
+
     /* grid */
     .grid{
       display:grid;
@@ -138,15 +185,19 @@
       gap: 18px;
       margin-top: 18px;
     }
-
     @media (max-width: 1040px){
       .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .chips{ max-width: 360px; }
+    }
+    @media (max-width: 860px){
+      .top{ flex-wrap: wrap; border-radius: 22px; }
+      .brand{ width: 100%; justify-content: center; padding-left: 0; text-align:center; }
+      .brandInfo{ align-items:center; }
+      .search{ width: 100%; }
+      .chips{ width: 100%; max-width: none; justify-content: center; }
+      .brandBtns{ justify-content:center; }
     }
     @media (max-width: 680px){
-      .top{ flex-wrap: wrap; border-radius: 22px; }
-      .brand{ width: 100%; justify-content: center; padding-left: 0; }
-      .search{ width: 100%; }
-      .chips{ width: 100%; }
       .grid{ grid-template-columns: 1fr; }
     }
 
@@ -253,32 +304,6 @@
       flex: 0 0 auto;
     }
 
-    .btn{
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-weight: 900;
-      font-size: 13px;
-      border: 1px solid var(--stroke);
-      cursor:pointer;
-      background: #fff;
-      transition: transform .08s ease, box-shadow .18s ease, border-color .18s ease;
-      text-decoration:none;
-      color: inherit;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width: 110px;
-    }
-    .btn:hover{ transform: translateY(-1px); }
-    .btn:focus{ outline: 3px solid var(--focus); outline-offset: 2px; }
-
-    .btnPrimary{
-      background: var(--accent);
-      border-color: rgba(0,0,0,.08);
-      color: var(--accentText);
-      box-shadow: 0 10px 18px rgba(243,178,27,.30);
-    }
-
     .empty{
       margin: 20px 4px 0;
       padding: 18px;
@@ -289,7 +314,7 @@
       display:none;
     }
 
-    /* ===== Frau Anna brand blocks (below catalog) ===== */
+    /* ===== Brand blocks ===== */
     .brandBlock{
       margin-top: 46px;
       padding: 28px;
@@ -335,7 +360,44 @@
       .approachGrid{ grid-template-columns: 1fr; }
     }
 
-    /* modal */
+    /* contacts block */
+    .contactGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .contactCard{
+      background:#fff;
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      padding:16px;
+    }
+    .contactLabel{
+      font-size:12px;
+      color: var(--muted);
+      font-weight:900;
+      text-transform: uppercase;
+      letter-spacing:.04em;
+      margin-bottom: 6px;
+    }
+    .contactValue{
+      font-size:15px;
+      font-weight:900;
+      color:#2b2b2b;
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+    .contactBtns{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 800px){
+      .contactGrid{ grid-template-columns: 1fr; }
+    }
+
+    /* ===== MODAL (фикс превью) ===== */
     .modalBack{
       position: fixed;
       inset: 0;
@@ -378,11 +440,12 @@
       cursor:pointer;
       font-weight: 950;
     }
-    .modal{
+    .modalBody{
       padding: 16px;
       display:grid;
       grid-template-columns: 1.1fr .9fr;
       gap: 16px;
+      background:#fff;
     }
     @media (max-width: 860px){
       .modalBody{ grid-template-columns: 1fr; }
@@ -468,16 +531,203 @@
       background: rgba(243,178,27,.85);
       border-color: rgba(243,178,27,.95);
     }
+
+    /* ===== Wheel of Fortune styles ===== */
+    .wheel-btn{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 100000;
+
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+
+      padding:12px 16px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.10);
+
+      font-weight:950;
+      cursor:pointer;
+
+      background: var(--accent);
+      color: var(--accentText);
+      box-shadow: 0 14px 30px rgba(0,0,0,.18);
+      transform: translateY(0);
+    }
+    .wheel-btn:hover{ transform: translateY(-1px); }
+    .wheel-btn:active{ transform: translateY(0); }
+    .wheel-btn:disabled{ opacity:.55; cursor:not-allowed; }
+
+    .wheel-btn-badge{
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .wheel-btn.attn{
+      animation: wheelPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes wheelPulse{
+      0%{ transform: translateY(0) scale(1); }
+      50%{ transform: translateY(-1px) scale(1.03); }
+      100%{ transform: translateY(0) scale(1); }
+    }
+
+    .wheel-nudge{
+      position: fixed;
+      right: 18px;
+      bottom: 78px;
+      z-index: 100000;
+
+      display:none;
+      align-items:center;
+      gap:10px;
+
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 16px;
+      padding: 10px 12px;
+
+      font-weight: 850;
+      box-shadow: 0 14px 30px rgba(0,0,0,.14);
+    }
+    .wheel-nudge-close{
+      border:0;
+      background:transparent;
+      cursor:pointer;
+      font-weight: 950;
+      font-size: 14px;
+      opacity:.8;
+    }
+
+    @media (max-width: 680px){
+      .wheel-btn{ right: 14px; bottom: 14px; padding: 12px 14px; }
+      .wheel-nudge{ right: 14px; bottom: 72px; }
+    }
+
+    .wheel-modal{
+      position:fixed; inset:0; display:none;
+      background:rgba(20,14,8,.55);
+      align-items:center; justify-content:center;
+      padding:18px; z-index:9999;
+    }
+    .wheel-modal.is-open{ display:flex; }
+
+    .wheel-card{
+      width:min(560px, 96vw);
+      background:#fff; border-radius:22px;
+      padding:16px 16px 14px;
+      box-shadow:0 18px 60px rgba(0,0,0,.25);
+      position:relative;
+    }
+    .wheel-close{
+      position:absolute; top:10px; right:10px;
+      border:0; background:transparent; cursor:pointer;
+      font-size:18px; padding:8px 10px; border-radius:12px;
+    }
+    .wheel-head{ padding:4px 2px 10px; }
+    .wheel-title{ font-size:20px; font-weight:900; color:#2b241a; }
+    .wheel-sub{ margin-top:6px; opacity:.78; color:#2b241a; }
+
+    .wheel-wrap{
+      position:relative;
+      display:flex; align-items:center; justify-content:center;
+      padding:8px 0 6px;
+    }
+    .wheel-pointer{
+      position:absolute; top:2px;
+      width:0; height:0;
+      border-left:14px solid transparent;
+      border-right:14px solid transparent;
+      border-top:22px solid #2b241a;
+      filter:drop-shadow(0 6px 10px rgba(0,0,0,.2));
+      z-index:2;
+    }
+    #wheelCanvas{
+      border-radius:50%;
+      box-shadow:0 12px 34px rgba(0,0,0,.16);
+      background:#fff;
+    }
+
+    .wheel-actions{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      margin-top:10px;
+    }
+    .wheel-spin{
+      padding:12px 16px; border-radius:999px; border:0;
+      font-weight:900; cursor:pointer;
+      min-width:140px;
+      background:#e9c07a; color:#2b241a;
+      box-shadow:0 10px 26px rgba(0,0,0,.12);
+    }
+    .wheel-spin[disabled]{ opacity:.55; cursor:not-allowed; }
+    .wheel-status{ font-size:14px; opacity:.8; color:#2b241a; }
+
+    .wheel-result{
+      margin-top:14px;
+      padding:12px; border-radius:16px;
+      background:rgba(43,36,26,.06);
+    }
+    .wheel-result-title{ font-weight:900; margin-bottom:6px; color:#2b241a; }
+    .wheel-result-text{ font-size:16px; font-weight:800; margin-bottom:10px; color:#2b241a; }
+
+    .wheel-code{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .wheel-code-label{ font-weight:800; opacity:.75; color:#2b241a; }
+    .wheel-code-value{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-weight:900;
+      padding:8px 10px; border-radius:12px;
+      background:#fff;
+      box-shadow:0 8px 20px rgba(0,0,0,.08);
+      color:#2b241a;
+    }
+    .wheel-copy{
+      padding:8px 10px; border-radius:12px; border:0; cursor:pointer; font-weight:900;
+      background:#fff; color:#2b241a;
+      box-shadow:0 8px 20px rgba(0,0,0,.08);
+    }
+
+    .wheel-help{
+      font-size:13px;
+      line-height:1.35;
+      opacity:.82;
+      margin:4px 0 10px;
+      color:#2b241a;
+    }
+
+    .wheel-claim{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 14px; border-radius:999px;
+      font-weight:950; text-decoration:none;
+      background:#2b241a; color:#fff;
+      box-shadow:0 10px 26px rgba(0,0,0,.14);
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
+
     <div class="top" role="region" aria-label="Поиск и фильтры">
       <div class="brand" aria-label="Бренд">
         <img class="logo" src="logo.png" alt="Frau Anna логотип" onerror="this.style.display='none'">
-        <div>
+        <div class="brandInfo">
           <div class="brandTitle">ФРАУ АННА - НЕМЕЦКИЙ ЯЗЫК</div>
           <div class="brandSub">витрина курсов и платных материалов</div>
+
+          <!-- КНОПКИ: под подписью (как было, только добавили сюда) -->
+          <div class="brandBtns" aria-label="Контакты">
+            <a class="btn btnSmall" href="#contacts">Контакты</a>
+            <a class="btn btnPrimary btnSmall" href="https://vk.ru/frauanna" target="_blank" rel="noopener">Написать</a>
+          </div>
         </div>
       </div>
 
@@ -495,21 +745,17 @@
 
     <div class="grid" id="grid" aria-label="Товары"></div>
 
-    <!-- ===== Frau Anna Approach ===== -->
     <section class="brandBlock">
       <h2 class="brandTitle2">Как проходит обучение</h2>
-
       <div class="approachGrid">
         <div class="approachItem">
           <div class="approachHead">Спокойно</div>
           <div class="approachText">без перегрузки и стресса</div>
         </div>
-
         <div class="approachItem">
           <div class="approachHead">Практично</div>
           <div class="approachText">реальные жизненные ситуации</div>
         </div>
-
         <div class="approachItem">
           <div class="approachHead">Системно</div>
           <div class="approachText">понятная структура и поддержка</div>
@@ -517,19 +763,47 @@
       </div>
     </section>
 
-    <!-- ===== For whom ===== -->
     <section class="brandBlock">
       <h2 class="brandTitle2">Кому подойдут материалы Frau Anna</h2>
-
       <p class="brandText">
         Взрослым, которые учат немецкий для жизни, работы или переезда.
         Если вы на уровне A1–B1 и хотите говорить увереннее —
         вам подойдёт формат Frau Anna.
       </p>
     </section>
+
+    <!-- CONTACTS (внизу, как ты просила) -->
+    <section class="brandBlock" id="contacts">
+      <h2 class="brandTitle2">Контакты</h2>
+      <p class="brandText" style="margin-bottom:14px;">
+        Напишите мне — подскажу, что выбрать, и помогу применить скидку/бонус по коду из колеса.
+      </p>
+
+      <div class="contactGrid">
+        <div class="contactCard">
+          <div class="contactLabel">VK</div>
+          <div class="contactValue">vk.ru/frauanna</div>
+          <div class="contactBtns">
+            <a class="btn btnPrimary" href="https://vk.ru/frauanna" target="_blank" rel="noopener">Написать в VK</a>
+          </div>
+        </div>
+
+        <div class="contactCard">
+          <div class="contactLabel">Email</div>
+          <div class="contactValue">frauanna@internet.ru</div>
+          <div class="contactBtns">
+            <button class="btn" type="button" id="copyEmailBtn">Скопировать email</button>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px;">
+            Если кнопка “mailto” на вашем устройстве не настроена — просто скопируйте email.
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
 
-  <!-- MODAL -->
+  <!-- MODAL (товары) -->
   <div class="modalBack" id="modalBack" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-label="Подробности товара">
       <div class="modalHead">
@@ -538,7 +812,6 @@
       </div>
 
       <div class="modalBody">
-        <!-- Gallery -->
         <div class="box" id="mGalleryBox">
           <h4>Превью</h4>
           <div class="gallery">
@@ -551,7 +824,6 @@
           <div class="dots" id="gDots"></div>
         </div>
 
-        <!-- Info -->
         <div class="box">
           <h4>Описание</h4>
           <div id="mDesc" style="font-size:14px;line-height:1.5;color:#3e3e3e"></div>
@@ -695,6 +967,15 @@
       return (p.tags || []).includes(activeChip);
     }
 
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
     function cardHTML(p){
       const tagsText = (p.tags||[]).join(" · ");
       const cover = (p.images && p.images.length) ? p.images[0] : "";
@@ -703,7 +984,8 @@
           <div class="hero" aria-label="Превью товара">
             <div class="badge">${escapeHtml(p.badge || "")}</div>
             ${cover
-              ? `<img class="heroImg" src="${cover}" alt="" loading="lazy" onerror="this.remove(); this.parentElement.insertAdjacentHTML('beforeend','<div class=thumbText>preview</div>')">`
+              ? `<img class="heroImg" src="${cover}" alt="" loading="lazy"
+                   onerror="this.remove(); this.parentElement.insertAdjacentHTML('beforeend','<div class=thumbText>preview</div>')">`
               : `<div class="thumbText">preview</div>`
             }
           </div>
@@ -842,203 +1124,88 @@
     modalBack.addEventListener("click", (e)=>{ if(e.target === modalBack) closeModal(); });
     window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
 
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
     qEl.addEventListener("input", render);
 
     buildChips();
     render();
+
+    // copy email
+    const copyEmailBtn = document.getElementById("copyEmailBtn");
+    if (copyEmailBtn){
+      copyEmailBtn.addEventListener("click", async () => {
+        const email = "frauanna@internet.ru";
+        try{
+          await navigator.clipboard.writeText(email);
+          copyEmailBtn.textContent = "Скопировано!";
+          setTimeout(()=> copyEmailBtn.textContent = "Скопировать email", 1200);
+        }catch{
+          const ta = document.createElement("textarea");
+          ta.value = email;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+          copyEmailBtn.textContent = "Скопировано!";
+          setTimeout(()=> copyEmailBtn.textContent = "Скопировать email", 1200);
+        }
+      });
+    }
   </script>
-  <!-- ===== Wheel of Fortune — Frau Anna (Adults) ===== -->
 
-<button id="wheelOpenBtn" class="wheel-btn" type="button">
-  Колесо бонусов (1 раз)
-</button>
+  <!-- ===== Wheel of Fortune ===== -->
+  <button id="wheelOpenBtn" class="wheel-btn" type="button" aria-label="Открыть колесо бонусов">
+    🎁 Бонус <span class="wheel-btn-badge">1 раз</span>
+  </button>
 
-<div id="wheelModal" class="wheel-modal" aria-hidden="true">
-  <div class="wheel-card" role="dialog" aria-modal="true" aria-label="Колесо бонусов">
-    <button class="wheel-close" id="wheelCloseBtn" type="button" aria-label="Закрыть">✕</button>
+  <div id="wheelNudge" class="wheel-nudge" aria-live="polite">
+    Хочешь бонус? Крути колесо 🎁
+    <button id="wheelNudgeClose" class="wheel-nudge-close" type="button" aria-label="Скрыть">✕</button>
+  </div>
 
-    <div class="wheel-head">
-      <div class="wheel-title">Колесо бонусов</div>
-      <div class="wheel-sub">Один шанс. Нажми «Крутить» 🙂</div>
-    </div>
+  <div id="wheelModal" class="wheel-modal" aria-hidden="true">
+    <div class="wheel-card" role="dialog" aria-modal="true" aria-label="Колесо бонусов">
+      <button class="wheel-close" id="wheelCloseBtn" type="button" aria-label="Закрыть">✕</button>
 
-    <div class="wheel-wrap">
-      <div class="wheel-pointer" aria-hidden="true"></div>
-      <canvas id="wheelCanvas" width="420" height="420"></canvas>
-    </div>
-
-    <div class="wheel-actions">
-      <button id="wheelSpinBtn" class="wheel-spin" type="button">Крутить</button>
-      <div id="wheelStatus" class="wheel-status"></div>
-    </div>
-
-    <div id="wheelResult" class="wheel-result" hidden>
-      <div class="wheel-result-title">Твой приз:</div>
-      <div id="wheelResultText" class="wheel-result-text"></div>
-
-      <div class="wheel-code">
-        <div class="wheel-code-label">Код:</div>
-        <div id="wheelCodeValue" class="wheel-code-value"></div>
-        <button id="wheelCopyBtn" class="wheel-copy" type="button">Скопировать</button>
+      <div class="wheel-head">
+        <div class="wheel-title">Колесо бонусов</div>
+        <div class="wheel-sub">Один шанс. Нажми «Крутить» 🙂</div>
       </div>
 
-      <div class="wheel-help">
-        Чтобы забрать бонус, нажми кнопку ниже и отправь мне код. Я отвечу с инструкцией/ссылкой или применю скидку.
+      <div class="wheel-wrap">
+        <div class="wheel-pointer" aria-hidden="true"></div>
+        <canvas id="wheelCanvas" width="420" height="420"></canvas>
       </div>
 
-      <a id="wheelClaimLink" class="wheel-claim" href="#" target="_blank" rel="noopener">
-        Написать и забрать
-      </a>
+      <div class="wheel-actions">
+        <button id="wheelSpinBtn" class="wheel-spin" type="button">Крутить</button>
+        <div id="wheelStatus" class="wheel-status"></div>
+      </div>
+
+      <div id="wheelResult" class="wheel-result" hidden>
+        <div class="wheel-result-title">Твой приз:</div>
+        <div id="wheelResultText" class="wheel-result-text"></div>
+
+        <div class="wheel-code">
+          <div class="wheel-code-label">Код:</div>
+          <div id="wheelCodeValue" class="wheel-code-value"></div>
+          <button id="wheelCopyBtn" class="wheel-copy" type="button">Скопировать</button>
+        </div>
+
+        <div class="wheel-help">
+          Чтобы забрать бонус, нажми кнопку ниже и отправь мне код в VK. Я отвечу с инструкцией/ссылкой или применю скидку.
+        </div>
+
+        <a id="wheelClaimLink" class="wheel-claim" href="https://vk.ru/frauanna" target="_blank" rel="noopener">
+          Написать и забрать
+        </a>
+      </div>
     </div>
   </div>
-</div>
 
-<style>
-  /* кнопка */
- .wheel-btn{
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 100000;
-
-  display:inline-flex; align-items:center; justify-content:center;
-  padding:12px 16px; border-radius:999px; border:0;
-  font-weight:900; cursor:pointer;
-
-  background:#f2d7a6; color:#2b241a;
-  box-shadow:0 10px 26px rgba(0,0,0,.18);
-}
-.wheel-btn:hover{ transform: translateY(-1px); }
-.wheel-btn:active{ transform: translateY(0); }
-.wheel-btn:disabled{ opacity:.55; cursor:not-allowed; }
-  .wheel-btn:disabled{ opacity:.55; cursor:not-allowed; }
-
-  /* модалка */
-  .wheel-modal{
-    position:fixed; inset:0; display:none;
-    background:rgba(20,14,8,.55);
-    align-items:center; justify-content:center;
-    padding:18px; z-index:9999;
-  }
-  .wheel-modal.is-open{ display:flex; }
-
-  .wheel-card{
-    width:min(560px, 96vw);
-    background:#fff; border-radius:22px;
-    padding:16px 16px 14px;
-    box-shadow:0 18px 60px rgba(0,0,0,.25);
-    position:relative;
-  }
-  .wheel-close{
-    position:absolute; top:10px; right:10px;
-    border:0; background:transparent; cursor:pointer;
-    font-size:18px; padding:8px 10px; border-radius:12px;
-  }
-  .wheel-head{ padding:4px 2px 10px; }
-  .wheel-title{ font-size:20px; font-weight:900; color:#2b241a; }
-  .wheel-sub{ margin-top:6px; opacity:.78; color:#2b241a; }
-
-  .wheel-wrap{
-    position:relative;
-    display:flex; align-items:center; justify-content:center;
-    padding:8px 0 6px;
-  }
-  .wheel-pointer{
-    position:absolute; top:2px;
-    width:0; height:0;
-    border-left:14px solid transparent;
-    border-right:14px solid transparent;
-    border-top:22px solid #2b241a;
-    filter:drop-shadow(0 6px 10px rgba(0,0,0,.2));
-    z-index:2;
-  }
-  #wheelCanvas{
-    border-radius:50%;
-    box-shadow:0 12px 34px rgba(0,0,0,.16);
-    background:#fff;
-  }
-
-  .wheel-actions{
-    display:flex; gap:12px; align-items:center; justify-content:space-between;
-    margin-top:10px;
-  }
-  .wheel-spin{
-    padding:12px 16px; border-radius:999px; border:0;
-    font-weight:900; cursor:pointer;
-    min-width:140px;
-    background:#e9c07a; color:#2b241a;
-    box-shadow:0 10px 26px rgba(0,0,0,.12);
-  }
-  .wheel-spin[disabled]{ opacity:.55; cursor:not-allowed; }
-  .wheel-status{ font-size:14px; opacity:.8; color:#2b241a; }
-
-  .wheel-result{
-    margin-top:14px;
-    padding:12px; border-radius:16px;
-    background:rgba(43,36,26,.06);
-  }
-  .wheel-result-title{ font-weight:900; margin-bottom:6px; color:#2b241a; }
-  .wheel-result-text{ font-size:16px; font-weight:800; margin-bottom:10px; color:#2b241a; }
-
-  .wheel-code{
-    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-    margin-bottom:10px;
-  }
-  .wheel-code-label{ font-weight:800; opacity:.75; color:#2b241a; }
-  .wheel-code-value{
-    font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-weight:900;
-    padding:8px 10px; border-radius:12px;
-    background:#fff;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-    color:#2b241a;
-  }
-  .wheel-copy{
-    padding:8px 10px; border-radius:12px; border:0; cursor:pointer; font-weight:900;
-    background:#fff; color:#2b241a;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-  }
-
-  .wheel-help{
-    font-size:13px;
-    line-height:1.35;
-    opacity:.82;
-    margin:4px 0 10px;
-    color:#2b241a;
-  }
-
-  .wheel-claim{
-    display:inline-flex; align-items:center; justify-content:center;
-    padding:12px 14px; border-radius:999px;
-    font-weight:950; text-decoration:none;
-    background:#2b241a; color:#fff;
-    box-shadow:0 10px 26px rgba(0,0,0,.14);
-  }
-</style>
-
-<script>
+  <script>
 (() => {
-  // ===== Настройка "как забрать" =====
-  // По умолчанию: email (работает сразу).
-  // Когда будет готов VK-линк/бот, просто поменяй на "vk".
-  const CLAIM_MODE = "email"; // "email" | "vk"
+  const CONTACT_VK_URL = "https://vk.ru/frauanna";
 
-  // Если email:
-const CLAIM_EMAIL = "frauanna@internet.ru";
-  const EMAIL_SUBJECT = "Колесо бонусов — хочу забрать приз";
-  // Если VK: вставишь ссылку на "написать сообщение" в сообщество/личку.
-  const CLAIM_VK_URL = "https://vk.com/im?sel=-1"; // заглушка, можно заменить позже
-
-  // ===== Призы (5 секций) =====
   const PRIZES = [
     { title: "Бесплатный урок", code: "FREE-LESSON" },
     { title: "Скидка 10%", code: "SAVE10" },
@@ -1047,10 +1214,9 @@ const CLAIM_EMAIL = "frauanna@internet.ru";
     { title: "Проверка резюме на немецком", code: "CV-CHECK" }
   ];
 
-  // Ограничение "1 раз" — на этом устройстве/в этом браузере
-  const STORAGE_KEY = "frauanna_wheel_spin_v2";
+  const STORAGE_KEY = "frauanna_wheel_spin_v3";
+  const NUDGE_KEY = "frauanna_wheel_nudge_hidden_v1";
 
-  // ===== Элементы =====
   const openBtn = document.getElementById("wheelOpenBtn");
   const modal = document.getElementById("wheelModal");
   const closeBtn = document.getElementById("wheelCloseBtn");
@@ -1063,17 +1229,49 @@ const CLAIM_EMAIL = "frauanna@internet.ru";
   const copyBtn = document.getElementById("wheelCopyBtn");
   const claimLink = document.getElementById("wheelClaimLink");
 
+  const nudge = document.getElementById("wheelNudge");
+  const nudgeClose = document.getElementById("wheelNudgeClose");
+
   const canvas = document.getElementById("wheelCanvas");
   const ctx = canvas.getContext("2d");
 
-  // ===== Рисуем колесо =====
+  if (claimLink) claimLink.href = CONTACT_VK_URL;
+
+  openBtn.classList.add("attn");
+  setTimeout(() => openBtn.classList.remove("attn"), 6000);
+
+  function setOpenBtnUsedState(isUsed){
+    if (isUsed) {
+      openBtn.disabled = true;
+      openBtn.textContent = "🎁 Бонус получен";
+    } else {
+      openBtn.disabled = false;
+      openBtn.innerHTML = '🎁 Бонус <span class="wheel-btn-badge">1 раз</span>';
+    }
+  }
+
+  function hideNudge(){
+    if (nudge) nudge.style.display = "none";
+    try { localStorage.setItem(NUDGE_KEY, "1"); } catch {}
+  }
+  if (nudgeClose) nudgeClose.addEventListener("click", hideNudge);
+  openBtn.addEventListener("click", hideNudge);
+
+  setTimeout(() => {
+    const saved = getSavedSpin();
+    if (saved && saved.prizeIndex != null) return;
+    try {
+      if (localStorage.getItem(NUDGE_KEY) === "1") return;
+    } catch {}
+    if (nudge) nudge.style.display = "flex";
+  }, 7000);
+
   const W = canvas.width, H = canvas.height;
   const cx = W / 2, cy = H / 2;
   const radius = Math.min(W, H) / 2 - 10;
   const sliceCount = PRIZES.length;
   const sliceAngle = (Math.PI * 2) / sliceCount;
 
-  // спокойная "кофейная" пара + лёгкий акцент
   const SLICE_COLORS = ["#f2d7a6", "#e9c07a", "#f6e6c8", "#d9b06c", "#f0d2a0"];
 
   function drawWheel(rotation = 0) {
@@ -1110,7 +1308,6 @@ const CLAIM_EMAIL = "frauanna@internet.ru";
       ctx.restore();
     }
 
-    // центр
     ctx.beginPath();
     ctx.arc(cx, cy, 44, 0, Math.PI * 2);
     ctx.fillStyle = "#2b241a";
@@ -1146,7 +1343,6 @@ const CLAIM_EMAIL = "frauanna@internet.ru";
     }
   }
 
-  // ===== Логика "1 раз" + вращение =====
   let isSpinning = false;
   let currentRotation = 0;
 
@@ -1160,15 +1356,14 @@ const CLAIM_EMAIL = "frauanna@internet.ru";
 
   function updateUiLockState() {
     const saved = getSavedSpin();
-    if (saved && saved.prizeIndex != null) {
+    const used = !!(saved && saved.prizeIndex != null);
+    setOpenBtnUsedState(used);
+
+    if (used) {
       spinBtn.disabled = true;
-      openBtn.disabled = true;
-      openBtn.textContent = "Колесо уже использовано";
       statusEl.textContent = "Вы уже крутили колесо на этом устройстве.";
     } else {
       spinBtn.disabled = false;
-      openBtn.disabled = false;
-      openBtn.textContent = "Колесо бонусов (1 раз)";
       statusEl.textContent = "";
     }
   }
@@ -1186,32 +1381,17 @@ const CLAIM_EMAIL = "frauanna@internet.ru";
 
   function angleToPrizeIndex(angle) {
     const twoPi = Math.PI * 2;
-    let a = (angle % twoPi + twoPi) % twoPi; // 0..2pi
-    const pointerAngle = (3 * Math.PI) / 2; // верх
+    let a = (angle % twoPi + twoPi) % twoPi;
+    const pointerAngle = (3 * Math.PI) / 2;
     let relative = (pointerAngle - a + twoPi) % twoPi;
     return Math.floor(relative / sliceAngle) % sliceCount;
-  }
-
-  function buildClaimUrl(prize, code) {
-    const text = `Здравствуйте! Я выиграл(а) в «Колесе бонусов» приз: ${prize.title}. Код: ${code}. Хочу забрать бонус.`;
-
-    if (CLAIM_MODE === "vk") {
-      // VK: просто открываем ссылку на сообщения; текст пользователь вставит сам
-      return CLAIM_VK_URL;
-    }
-
-    // Email: откроется письмо уже с текстом и кодом
-    const subject = encodeURIComponent(EMAIL_SUBJECT);
-    const body = encodeURIComponent(text);
-    return `mailto:${encodeURIComponent(CLAIM_EMAIL)}?subject=${subject}&body=${body}`;
   }
 
   function showResult(prizeIndex) {
     const prize = PRIZES[prizeIndex];
     resultText.textContent = prize.title;
     codeValue.textContent = prize.code;
-
-    claimLink.href = buildClaimUrl(prize, prize.code);
+    if (claimLink) claimLink.href = CONTACT_VK_URL;
     resultBox.hidden = false;
   }
 
@@ -1238,14 +1418,11 @@ const CLAIM_EMAIL = "frauanna@internet.ru";
     statusEl.textContent = "Крутим…";
     resultBox.hidden = true;
 
-    // честный рандом
     const prizeIndex = Math.floor(Math.random() * sliceCount);
-
-    // целимся в центр сектора под верхний указатель
     const targetCenter = prizeIndex * sliceAngle + sliceAngle / 2;
     const base = (3 * Math.PI) / 2 - targetCenter;
 
-    const extraTurns = 6 + Math.floor(Math.random() * 3); // 6–8
+    const extraTurns = 6 + Math.floor(Math.random() * 3);
     const finalRotation = base + extraTurns * Math.PI * 2;
 
     animateRotation(currentRotation, finalRotation, 4200, (rot) => {
@@ -1269,17 +1446,14 @@ const CLAIM_EMAIL = "frauanna@internet.ru";
     });
   }
 
-  // ===== События =====
   openBtn.addEventListener("click", () => {
     drawWheel(currentRotation);
     const saved = getSavedSpin();
     resultBox.hidden = true;
 
-    // если уже крутили — сразу показываем то, что выпало
     if (saved && saved.prizeIndex != null) {
       showResult(saved.prizeIndex);
     }
-
     openModal();
   });
 
@@ -1308,14 +1482,10 @@ const CLAIM_EMAIL = "frauanna@internet.ru";
     }
   });
 
-  // init
   drawWheel(0);
   updateUiLockState();
 })();
-</script>
-
-<!-- ===== /Wheel of Fortune ===== -->
+  </script>
+  <!-- ===== /Wheel of Fortune ===== -->
 </body>
 </html>
-
-
