@@ -378,7 +378,7 @@
       cursor:pointer;
       font-weight: 950;
     }
-    .modalBody{
+    .modal{
       padding: 16px;
       display:grid;
       grid-template-columns: 1.1fr .9fr;
@@ -856,5 +856,456 @@
     buildChips();
     render();
   </script>
+  <!-- ===== Wheel of Fortune — Frau Anna (Adults) ===== -->
+
+<button id="wheelOpenBtn" class="wheel-btn" type="button">
+  Колесо бонусов (1 раз)
+</button>
+
+<div id="wheelModal" class="wheel-modal" aria-hidden="true">
+  <div class="wheel-card" role="dialog" aria-modal="true" aria-label="Колесо бонусов">
+    <button class="wheel-close" id="wheelCloseBtn" type="button" aria-label="Закрыть">✕</button>
+
+    <div class="wheel-head">
+      <div class="wheel-title">Колесо бонусов</div>
+      <div class="wheel-sub">Один шанс. Нажми «Крутить» 🙂</div>
+    </div>
+
+    <div class="wheel-wrap">
+      <div class="wheel-pointer" aria-hidden="true"></div>
+      <canvas id="wheelCanvas" width="420" height="420"></canvas>
+    </div>
+
+    <div class="wheel-actions">
+      <button id="wheelSpinBtn" class="wheel-spin" type="button">Крутить</button>
+      <div id="wheelStatus" class="wheel-status"></div>
+    </div>
+
+    <div id="wheelResult" class="wheel-result" hidden>
+      <div class="wheel-result-title">Твой приз:</div>
+      <div id="wheelResultText" class="wheel-result-text"></div>
+
+      <div class="wheel-code">
+        <div class="wheel-code-label">Код:</div>
+        <div id="wheelCodeValue" class="wheel-code-value"></div>
+        <button id="wheelCopyBtn" class="wheel-copy" type="button">Скопировать</button>
+      </div>
+
+      <div class="wheel-help">
+        Чтобы забрать бонус, нажми кнопку ниже и отправь мне код. Я отвечу с инструкцией/ссылкой или применю скидку.
+      </div>
+
+      <a id="wheelClaimLink" class="wheel-claim" href="#" target="_blank" rel="noopener">
+        Написать и забрать
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* кнопка */
+  .wheel-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:12px 16px; border-radius:999px; border:0;
+    font-weight:800; cursor:pointer;
+    background:#f2d7a6; color:#2b241a;
+    box-shadow:0 10px 26px rgba(0,0,0,.12);
+  }
+  .wheel-btn:disabled{ opacity:.55; cursor:not-allowed; }
+
+  /* модалка */
+  .wheel-modal{
+    position:fixed; inset:0; display:none;
+    background:rgba(20,14,8,.55);
+    align-items:center; justify-content:center;
+    padding:18px; z-index:9999;
+  }
+  .wheel-modal.is-open{ display:flex; }
+
+  .wheel-card{
+    width:min(560px, 96vw);
+    background:#fff; border-radius:22px;
+    padding:16px 16px 14px;
+    box-shadow:0 18px 60px rgba(0,0,0,.25);
+    position:relative;
+  }
+  .wheel-close{
+    position:absolute; top:10px; right:10px;
+    border:0; background:transparent; cursor:pointer;
+    font-size:18px; padding:8px 10px; border-radius:12px;
+  }
+  .wheel-head{ padding:4px 2px 10px; }
+  .wheel-title{ font-size:20px; font-weight:900; color:#2b241a; }
+  .wheel-sub{ margin-top:6px; opacity:.78; color:#2b241a; }
+
+  .wheel-wrap{
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    padding:8px 0 6px;
+  }
+  .wheel-pointer{
+    position:absolute; top:2px;
+    width:0; height:0;
+    border-left:14px solid transparent;
+    border-right:14px solid transparent;
+    border-top:22px solid #2b241a;
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,.2));
+    z-index:2;
+  }
+  #wheelCanvas{
+    border-radius:50%;
+    box-shadow:0 12px 34px rgba(0,0,0,.16);
+    background:#fff;
+  }
+
+  .wheel-actions{
+    display:flex; gap:12px; align-items:center; justify-content:space-between;
+    margin-top:10px;
+  }
+  .wheel-spin{
+    padding:12px 16px; border-radius:999px; border:0;
+    font-weight:900; cursor:pointer;
+    min-width:140px;
+    background:#e9c07a; color:#2b241a;
+    box-shadow:0 10px 26px rgba(0,0,0,.12);
+  }
+  .wheel-spin[disabled]{ opacity:.55; cursor:not-allowed; }
+  .wheel-status{ font-size:14px; opacity:.8; color:#2b241a; }
+
+  .wheel-result{
+    margin-top:14px;
+    padding:12px; border-radius:16px;
+    background:rgba(43,36,26,.06);
+  }
+  .wheel-result-title{ font-weight:900; margin-bottom:6px; color:#2b241a; }
+  .wheel-result-text{ font-size:16px; font-weight:800; margin-bottom:10px; color:#2b241a; }
+
+  .wheel-code{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+  .wheel-code-label{ font-weight:800; opacity:.75; color:#2b241a; }
+  .wheel-code-value{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-weight:900;
+    padding:8px 10px; border-radius:12px;
+    background:#fff;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    color:#2b241a;
+  }
+  .wheel-copy{
+    padding:8px 10px; border-radius:12px; border:0; cursor:pointer; font-weight:900;
+    background:#fff; color:#2b241a;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+  }
+
+  .wheel-help{
+    font-size:13px;
+    line-height:1.35;
+    opacity:.82;
+    margin:4px 0 10px;
+    color:#2b241a;
+  }
+
+  .wheel-claim{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:12px 14px; border-radius:999px;
+    font-weight:950; text-decoration:none;
+    background:#2b241a; color:#fff;
+    box-shadow:0 10px 26px rgba(0,0,0,.14);
+  }
+</style>
+
+<script>
+(() => {
+  // ===== Настройка "как забрать" =====
+  // По умолчанию: email (работает сразу).
+  // Когда будет готов VK-линк/бот, просто поменяй на "vk".
+  const CLAIM_MODE = "email"; // "email" | "vk"
+
+  // Если email:
+const CLAIM_EMAIL = "frauanna@internet.ru";
+  const EMAIL_SUBJECT = "Колесо бонусов — хочу забрать приз";
+  // Если VK: вставишь ссылку на "написать сообщение" в сообщество/личку.
+  const CLAIM_VK_URL = "https://vk.com/im?sel=-1"; // заглушка, можно заменить позже
+
+  // ===== Призы (5 секций) =====
+  const PRIZES = [
+    { title: "Бесплатный урок", code: "FREE-LESSON" },
+    { title: "Скидка 10%", code: "SAVE10" },
+    { title: "Скидка 15%", code: "SAVE15" },
+    { title: "Бонус-материал (PDF)", code: "BONUS-PDF" },
+    { title: "Проверка резюме на немецком", code: "CV-CHECK" }
+  ];
+
+  // Ограничение "1 раз" — на этом устройстве/в этом браузере
+  const STORAGE_KEY = "frauanna_wheel_spin_v2";
+
+  // ===== Элементы =====
+  const openBtn = document.getElementById("wheelOpenBtn");
+  const modal = document.getElementById("wheelModal");
+  const closeBtn = document.getElementById("wheelCloseBtn");
+  const spinBtn = document.getElementById("wheelSpinBtn");
+  const statusEl = document.getElementById("wheelStatus");
+
+  const resultBox = document.getElementById("wheelResult");
+  const resultText = document.getElementById("wheelResultText");
+  const codeValue = document.getElementById("wheelCodeValue");
+  const copyBtn = document.getElementById("wheelCopyBtn");
+  const claimLink = document.getElementById("wheelClaimLink");
+
+  const canvas = document.getElementById("wheelCanvas");
+  const ctx = canvas.getContext("2d");
+
+  // ===== Рисуем колесо =====
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2;
+  const radius = Math.min(W, H) / 2 - 10;
+  const sliceCount = PRIZES.length;
+  const sliceAngle = (Math.PI * 2) / sliceCount;
+
+  // спокойная "кофейная" пара + лёгкий акцент
+  const SLICE_COLORS = ["#f2d7a6", "#e9c07a", "#f6e6c8", "#d9b06c", "#f0d2a0"];
+
+  function drawWheel(rotation = 0) {
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+    ctx.translate(-cx, -cy);
+
+    for (let i = 0; i < sliceCount; i++) {
+      const start = i * sliceAngle;
+      const end = start + sliceAngle;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, radius, start, end);
+      ctx.closePath();
+
+      ctx.fillStyle = SLICE_COLORS[i % SLICE_COLORS.length];
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(43,36,26,.18)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(start + sliceAngle / 2);
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#2b241a";
+      ctx.font = "800 14px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      wrapText(ctx, PRIZES[i].title, radius - 16, 0, 180);
+      ctx.restore();
+    }
+
+    // центр
+    ctx.beginPath();
+    ctx.arc(cx, cy, 44, 0, Math.PI * 2);
+    ctx.fillStyle = "#2b241a";
+    ctx.fill();
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "900 14px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("SPIN", cx, cy + 5);
+
+    ctx.restore();
+  }
+
+  function wrapText(ctx, text, x, y, maxWidthPx) {
+    const words = text.split(" ");
+    let line = "";
+    const lines = [];
+    for (const w of words) {
+      const test = line ? (line + " " + w) : w;
+      if (ctx.measureText(test).width > maxWidthPx) {
+        if (line) lines.push(line);
+        line = w;
+      } else {
+        line = test;
+      }
+    }
+    if (line) lines.push(line);
+
+    const lineHeight = 16;
+    const startY = y - ((lines.length - 1) * lineHeight) / 2;
+    for (let i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], x, startY + i * lineHeight);
+    }
+  }
+
+  // ===== Логика "1 раз" + вращение =====
+  let isSpinning = false;
+  let currentRotation = 0;
+
+  function getSavedSpin() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); }
+    catch { return null; }
+  }
+  function saveSpin(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function updateUiLockState() {
+    const saved = getSavedSpin();
+    if (saved && saved.prizeIndex != null) {
+      spinBtn.disabled = true;
+      openBtn.disabled = true;
+      openBtn.textContent = "Колесо уже использовано";
+      statusEl.textContent = "Вы уже крутили колесо на этом устройстве.";
+    } else {
+      spinBtn.disabled = false;
+      openBtn.disabled = false;
+      openBtn.textContent = "Колесо бонусов (1 раз)";
+      statusEl.textContent = "";
+    }
+  }
+
+  function openModal() {
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+  function closeModal() {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  function angleToPrizeIndex(angle) {
+    const twoPi = Math.PI * 2;
+    let a = (angle % twoPi + twoPi) % twoPi; // 0..2pi
+    const pointerAngle = (3 * Math.PI) / 2; // верх
+    let relative = (pointerAngle - a + twoPi) % twoPi;
+    return Math.floor(relative / sliceAngle) % sliceCount;
+  }
+
+  function buildClaimUrl(prize, code) {
+    const text = `Здравствуйте! Я выиграл(а) в «Колесе бонусов» приз: ${prize.title}. Код: ${code}. Хочу забрать бонус.`;
+
+    if (CLAIM_MODE === "vk") {
+      // VK: просто открываем ссылку на сообщения; текст пользователь вставит сам
+      return CLAIM_VK_URL;
+    }
+
+    // Email: откроется письмо уже с текстом и кодом
+    const subject = encodeURIComponent(EMAIL_SUBJECT);
+    const body = encodeURIComponent(text);
+    return `mailto:${encodeURIComponent(CLAIM_EMAIL)}?subject=${subject}&body=${body}`;
+  }
+
+  function showResult(prizeIndex) {
+    const prize = PRIZES[prizeIndex];
+    resultText.textContent = prize.title;
+    codeValue.textContent = prize.code;
+
+    claimLink.href = buildClaimUrl(prize, prize.code);
+    resultBox.hidden = false;
+  }
+
+  function animateRotation(from, to, durationMs, onUpdate, onDone) {
+    const start = performance.now();
+    function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+    function frame(now) {
+      const t = Math.min(1, (now - start) / durationMs);
+      const eased = easeOutCubic(t);
+      const val = from + (to - from) * eased;
+      onUpdate(val);
+      if (t < 1) requestAnimationFrame(frame);
+      else onDone();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function spinOnce() {
+    const saved = getSavedSpin();
+    if (saved && saved.prizeIndex != null) return;
+
+    isSpinning = true;
+    spinBtn.disabled = true;
+    statusEl.textContent = "Крутим…";
+    resultBox.hidden = true;
+
+    // честный рандом
+    const prizeIndex = Math.floor(Math.random() * sliceCount);
+
+    // целимся в центр сектора под верхний указатель
+    const targetCenter = prizeIndex * sliceAngle + sliceAngle / 2;
+    const base = (3 * Math.PI) / 2 - targetCenter;
+
+    const extraTurns = 6 + Math.floor(Math.random() * 3); // 6–8
+    const finalRotation = base + extraTurns * Math.PI * 2;
+
+    animateRotation(currentRotation, finalRotation, 4200, (rot) => {
+      currentRotation = rot;
+      drawWheel(currentRotation);
+    }, () => {
+      isSpinning = false;
+
+      const landedIndex = angleToPrizeIndex(currentRotation);
+
+      saveSpin({
+        prizeIndex: landedIndex,
+        prizeTitle: PRIZES[landedIndex].title,
+        code: PRIZES[landedIndex].code,
+        ts: Date.now()
+      });
+
+      statusEl.textContent = "Готово!";
+      showResult(landedIndex);
+      updateUiLockState();
+    });
+  }
+
+  // ===== События =====
+  openBtn.addEventListener("click", () => {
+    drawWheel(currentRotation);
+    const saved = getSavedSpin();
+    resultBox.hidden = true;
+
+    // если уже крутили — сразу показываем то, что выпало
+    if (saved && saved.prizeIndex != null) {
+      showResult(saved.prizeIndex);
+    }
+
+    openModal();
+  });
+
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+  spinBtn.addEventListener("click", () => {
+    if (isSpinning) return;
+    spinOnce();
+  });
+
+  copyBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(codeValue.textContent.trim());
+      copyBtn.textContent = "Скопировано!";
+      setTimeout(() => (copyBtn.textContent = "Скопировать"), 1200);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = codeValue.textContent.trim();
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      copyBtn.textContent = "Скопировано!";
+      setTimeout(() => (copyBtn.textContent = "Скопировать"), 1200);
+    }
+  });
+
+  // init
+  drawWheel(0);
+  updateUiLockState();
+})();
+</script>
+
+<!-- ===== /Wheel of Fortune ===== -->
 </body>
 </html>
+
